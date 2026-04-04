@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Moniteur {
+  id           Int      @id @default(autoincrement())
+  prenom       String
+  nom          String
+  numeroPermis String   @unique
+  telephone    String
+  email        String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  eleves  Eleve[]
+  seances Seance[]
+}
+
+model Eleve {
+  id            Int      @id @default(autoincrement())
+  prenom        String
+  nom           String
+  email         String   @unique
+  telephone     String
+  dateNaissance DateTime
+  moniteurId    Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  moniteur Moniteur @relation(fields: [moniteurId], references: [id])
+  seances  Seance[]
+}
+
+model Vehicule {
+  id              Int            @id @default(autoincrement())
+  immatriculation String         @unique
+  marque          String
+  modele          String
+  type            TypeVehicule
+  statut          StatutVehicule @default(DISPONIBLE)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  seances Seance[]
+}
+
+model Seance {
+  id         Int          @id @default(autoincrement())
+  dateHeure  DateTime
+  duree      Int
+  eleveId    Int
+  moniteurId Int
+  vehiculeId Int
+  statut     StatutSeance @default(PLANIFIEE)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  eleve    Eleve    @relation(fields: [eleveId], references: [id])
+  moniteur Moniteur @relation(fields: [moniteurId], references: [id])
+  vehicule Vehicule @relation(fields: [vehiculeId], references: [id])
+}
+
+enum TypeVehicule {
+  VOITURE
+  MOTO
+  CAMION
+}
+
+enum StatutVehicule {
+  DISPONIBLE
+  EN_MAINTENANCE
+  HORS_SERVICE
+}
+
+enum StatutSeance {
+  PLANIFIEE
+  EFFECTUEE
+  ANNULEE
+}
