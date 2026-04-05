@@ -25,7 +25,7 @@ app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'AUTO 221 API opérationnelle.' });
 });
 // Swagger UI
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 // 404 — route non trouvée
