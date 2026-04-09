@@ -11,7 +11,7 @@ class SeanceService {
   async create(data) {
     const { eleveId, moniteurId, vehiculeId, dateHeure } = data;
 
-    // 1. Vérifier existence des entités liées
+    // 1. Vérifier existence des entités liées ---
     const eleve = await EleveRepository.findById(eleveId);
     if (!eleve) throw new AppError(`Élève #${eleveId} introuvable.`, 404);
 
