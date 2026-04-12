@@ -83,3 +83,19 @@ enum StatutSeance {
   EFFECTUEE
   ANNULEE
 }
+
+model User {
+  id        Int      @id @default(autoincrement())
+  prenom    String
+  nom       String
+  email     String   @unique
+  password  String
+  role      Role     @default(MONITEUR)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  MONITEUR
+}
