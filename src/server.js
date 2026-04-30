@@ -1,10 +1,17 @@
 const app    = require('./app');
 const prisma = require('./config/prisma');
+const { execSync } = require('child_process');
 
 const PORT = process.env.PORT || 3000;
 
 async function main() {
-  // Vérifier la connexion à la base de données
+  // Appliquer les migrations automatiquement au démarrage
+  if (process.env.NODE_ENV === 'production') {
+    console.log('🔄 Application des migrations...');
+    execSync('npx prisma migrate deploy', { stdio: 'inherit' });
+    console.log('✅ Migrations appliquées.');
+  }
+
   await prisma.$connect();
   console.log('✅ Connexion base de données établie.');
 
