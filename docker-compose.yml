@@ -1,0 +1,44 @@
+
+
+services:
+  # Service PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: autoo221_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: fatoumata123
+      POSTGRES_DB: autoo221
+    ports:
+      - "5433:5432"
+      # 5433 sur ton PC → 5432 dans le conteneur
+      # On évite le conflit avec ton PostgreSQL local (port 5432)
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Les données persistent même si le conteneur est arrêté
+    restart: unless-stopped
+
+  # Service API Node.js
+  api:
+    build: .
+    container_name: autoo221_api
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:fatoumata123@postgres:5432/autoo221?schema=public
+      DIRECT_URL: postgresql://postgres:fatoumata123@postgres:5432/autoo221?schema=public
+      # "postgres" = nom du service ci-dessus (pas localhost !)
+      NODE_ENV: production
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+    depends_on:
+      - postgres
+      # L'API démarre seulement après PostgreSQL
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    # Volume nommé — les données survivent aux redémarrages
